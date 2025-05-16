@@ -1,0 +1,337 @@
+ADAPTIVE CARLA RL - TRAINING AND RUNNING INSTRUCTIONS
+=================================================
+
+1. STARTING CARLA SERVER
+-----------------------
+a. Go to CARLA directory:
+   cd C:\CARLA\WindowsNoEditor
+
+b. Run CARLA server:
+   CarlaUE4.exe
+
+c. Wait for CARLA window to open and server to start
+
+2. TRAINING THE MODEL
+--------------------
+a. Open a new terminal
+b. Navigate to project directory:
+   cd C:\python\adaptive-carla-rl
+
+c. Run training script:
+   python scripts/train.py
+
+d. Training will:
+   - Load configurations from configs/defaults.yaml
+   - Train using MetaPPOTrainer with SSD detector
+   - Save model to models/final_meta_ppo
+   - Show progress in terminal
+
+3. EVALUATING THE MODEL
+----------------------
+a. After training completes, run evaluation:
+   python scripts/evaluate.py --model models/final_meta_ppo --config configs/defaults.yaml
+
+b. Additional evaluation options:
+   python scripts/evaluate.py --model models/final_meta_ppo --config configs/defaults.yaml --episodes 10 --video
+
+4. CONFIGURATION FILES
+---------------------
+- configs/defaults.yaml: Main configuration
+- configs/urban.yaml: Urban driving scenario
+- configs/highway.yaml: Highway driving scenario
+
+5. TRAINING PARAMETERS (in defaults.yaml)
+----------------------------------------
+training:
+  total_timesteps: 1000000  # Total training steps
+  batch_size: 64
+  n_steps: 2048
+  gamma: 0.99
+  learning_rate: 0.0003
+  ent_coef: 0.01
+  clip_range: 0.2
+  n_epochs: 10
+  gae_lambda: 0.95
+
+6. ENVIRONMENT PARAMETERS
+------------------------
+environment:
+  frame_skip: 1
+  max_episode_steps: 1000
+  obs_stack: 3
+  reward_config:
+    detection_reward: 0.1
+    fps_reward: 0.05
+    collision_penalty: -1.0
+    success_reward: 1.0
+
+7. DETECTOR PARAMETERS
+---------------------
+detector:
+  conf_thresh: 0.5
+  model: "ssd300_vgg16"
+  weights: "DEFAULT"
+
+8. ROI PARAMETERS
+----------------
+roi:
+  min_size: 0.2
+  max_size: 0.8
+  overlap_thresh: 0.5
+
+9. TROUBLESHOOTING
+-----------------
+a. If CARLA server fails to start:
+   - Check if another instance is running
+   - Verify CARLA installation
+   - Check system requirements
+
+b. If training fails:
+   - Check GPU memory usage
+   - Verify CUDA installation
+   - Check Python dependencies
+
+c. If evaluation fails:
+   - Verify model path
+   - Check configuration file
+   - Ensure CARLA server is running
+
+10. VISUALIZATION AND ANALYSIS
+-----------------------------
+a. Training Performance Graphs:
+   python scripts/visualize_training.py --type performance --metrics reward fps detection_accuracy
+   # Generates:
+   # - training_rewards.png
+   # - training_fps.png
+   # - training_accuracy.png
+
+b. Environment Visualization:
+   python scripts/visualize_environment.py --episode <episode_number>
+   # Generates:
+   # - Key frames from the episode
+   # - Agent trajectory plot
+   # - Episode-specific metrics
+
+11. MONITORING TRAINING
+---------------------
+- Check tensorboard logs:
+  tensorboard --logdir ./logs
+
+- Monitor saved models:
+  ls models/
+
+- Check evaluation videos:
+  ls videos/
+
+12. REQUIRED DEPENDENCIES
+-----------------------
+- CARLA 0.9.14
+- Python 3.7-3.9
+- PyTorch
+- Stable-Baselines3
+- OpenCV
+- Transformers
+- Gymnasium
+- NumPy
+- YAML
+
+13. SYSTEM REQUIREMENTS
+----------------------
+- 8GB RAM minimum
+- DirectX 11 compatible GPU
+- Windows 10/11
+- Sufficient disk space for CARLA and models 
+
+14. PYTHON AND CARLA API SETUP
+-----------------------------
+a. Python Environment Setup:
+   - Install Python 3.7-3.9 from python.org
+   - Add Python to System PATH:
+     * Open System Properties (Win + Pause/Break)
+     * Click "Environment Variables"
+     * Under "System Variables", find "Path"
+     * Add these paths:
+       C:\Users\[Username]\AppData\Local\Programs\Python\Python39
+       C:\Users\[Username]\AppData\Local\Programs\Python\Python39\Scripts
+
+b. CARLA Python API Setup:
+   - After installing CARLA, add Python API to PYTHONPATH:
+     * Open System Properties
+     * Click "Environment Variables"
+     * Under "System Variables", click "New"
+     * Variable name: PYTHONPATH
+     * Variable value: C:\CARLA\WindowsNoEditor\PythonAPI\carla\dist\carla-*py3.7-win-amd64.egg
+
+c. Verify Installation:
+   - Open Python terminal:
+     python
+   - Try importing CARLA:
+     import carla
+
+
+15. PYTHON LIBRARY 
+--------------------------------------
+# Core Dependencies
+pip install torch torchvision torchaudio
+pip install numpy
+pip install opencv-python
+pip install gymnasium
+pip install stable-baselines3
+pip install transformers
+pip install pyyaml
+pip install matplotlib
+pip install pandas
+pip install tensorboard
+pip install scipy
+pip install tqdm
+pip install pillow
+pip install requests
+pip install cloudpickle
+pip install typing-extensions
+pip install jupyter
+pip install ipython
+pip install pytest
+pip install black
+pip install flake8
+pip install seaborn 
+pip install opencv-python
+
+16. TRAINING ALL MODELS AND SCENARIOS
+-----------------------------------
+a. Training YOLOv9 Model:
+   python training/curriculum.py --config configs/defaults.yaml --model yolo --scenario urban
+   python training/curriculum.py --config configs/defaults.yaml --model yolo --scenario highway
+
+b. Training DETR Model:
+   python training/curriculum.py --config configs/defaults.yaml --model detr --scenario urban
+   python training/curriculum.py --config configs/defaults.yaml --model detr --scenario highway
+
+c. Training Meta-Learning Model:
+   python training/meta_trainer.py --config configs/defaults.yaml --scenario urban
+   python training/meta_trainer.py --config configs/defaults.yaml --scenario highway
+
+d. Training Hybrid Detector:
+   python training/hybrid_trainer.py --config configs/defaults.yaml --scenario urban
+   python training/hybrid_trainer.py --config configs/defaults.yaml --scenario highway
+
+17. RUNNING ALL SCENARIOS
+------------------------
+a. Urban Scenario:
+   python scripts/evaluate.py --model models/urban_yolo --config configs/urban.yaml --episodes 10 --video
+   python scripts/evaluate.py --model models/urban_detr --config configs/urban.yaml --episodes 10 --video
+   python scripts/evaluate.py --model models/urban_meta --config configs/urban.yaml --episodes 10 --video
+   python scripts/evaluate.py --model models/urban_hybrid --config configs/urban.yaml --episodes 10 --video
+
+b. Highway Scenario:
+   python scripts/evaluate.py --model models/highway_yolo --config configs/highway.yaml --episodes 10 --video
+   python scripts/evaluate.py --model models/highway_detr --config configs/highway.yaml --episodes 10 --video
+   python scripts/evaluate.py --model models/highway_meta --config configs/highway.yaml --episodes 10 --video
+   python scripts/evaluate.py --model models/highway_hybrid --config configs/highway.yaml --episodes 10 --video
+
+18. BATCH TRAINING AND EVALUATION
+--------------------------------
+a. Train All Models (Urban):
+   python scripts/batch_train.py --scenario urban --models all
+
+b. Train All Models (Highway):
+   python scripts/batch_train.py --scenario highway --models all
+
+c. Evaluate All Models (Urban):
+   python scripts/batch_evaluate.py --scenario urban --models all --episodes 10 --video
+
+d. Evaluate All Models (Highway):
+   python scripts/batch_evaluate.py --scenario highway --models all --episodes 10 --video
+
+19. MODEL COMPARISON
+-------------------
+a. Generate Comparison Metrics:
+   python scripts/compare_models.py --scenarios urban highway --models yolo detr meta hybrid
+
+b. Generate Comparison Plots:
+   python scripts/plot_results.py --scenarios urban highway --models yolo detr meta hybrid
+
+c. Generate Summary Report:
+   python scripts/generate_report.py --scenarios urban highway --models yolo detr meta hybrid
+
+20. VISUALIZATION AND ANALYSIS
+-----------------------------
+a. Training Performance Graphs:
+   python scripts/visualize_training.py --type performance --models all --metrics reward fps detection_accuracy
+   # Generates:
+   # - training_rewards.png
+   # - training_fps.png
+   # - training_accuracy.png
+
+b. Model Comparison Charts:
+   python scripts/visualize_comparison.py --type comparison --models yolo detr meta hybrid
+   # Generates:
+   # - model_comparison_bar.png
+   # - model_comparison_radar.png
+   # - model_comparison_boxplot.png
+
+c. Scenario Analysis:
+   python scripts/visualize_scenarios.py --scenarios urban highway
+   # Generates:
+   # - urban_performance.png
+   # - highway_performance.png
+   # - scenario_comparison.png
+
+d. Detection Visualization:
+   python scripts/visualize_detections.py --model hybrid --scenario urban --frames 100
+   # Generates:
+   # - detection_sequence.gif
+   # - detection_heatmap.png
+   # - detection_confidence.png
+
+e. Computational Analysis:
+   python scripts/visualize_computation.py --type resource --models all
+   # Generates:
+   # - gpu_usage.png
+   # - memory_usage.png
+   # - inference_time.png
+
+f. Interactive Dashboards:
+   python scripts/launch_dashboard.py --port 8050
+   # Launches interactive dashboard with:
+   # - Real-time training metrics
+   # - Model comparison tools
+   # - Scenario analysis
+   # - Performance metrics
+
+g. Export Results:
+   python scripts/export_results.py --format all
+   # Generates:
+   # - results.pdf (comprehensive report)
+   # - results.xlsx (detailed metrics)
+   # - results.json (raw data)
+   # - results.html (interactive report)
+
+h. Custom Visualizations:
+   python scripts/custom_visualize.py --config visualization_config.yaml
+   # Allows custom visualization generation based on config file
+
+Visualization Instructions:
+------------------------
+
+1. Generate Model Performance Visualizations:
+   python scripts/visualize_models.py --models dqn ppo sac
+   This will create:
+   - Training curves for each model (loss, accuracy, learning rate)
+   - Comparison bar charts between models
+   - All visualizations will be saved in the 'visualizations' directory
+
+2. Generate Scenario Analysis Visualizations:
+   python scripts/visualize_scenarios.py --scenarios urban highway
+   This will create:
+   - Performance metrics for each scenario (rewards, detection accuracy, FPS)
+   - Comparison plots between scenarios
+   - All visualizations will be saved in the 'visualizations' directory
+
+3. Generate Environment and Agent Behavior Visualizations:
+   python scripts/visualize_environment.py --episode <episode_number>
+   This will create:
+   - Key frames from the episode
+   - Agent trajectory plot
+   - Episode-specific metrics (rewards, speed, steering)
+   - All visualizations will be saved in the 'visualizations' directory
+   

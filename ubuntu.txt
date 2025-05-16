@@ -1,0 +1,57 @@
+Ubuntu Setup Guide for Adaptive CARLA RL Project
+
+1. Install Dependencies
+# System dependencies
+sudo apt-get update
+sudo apt-get install -y python3.7 python3.7-dev python3-pip
+sudo apt-get install -y libomp-dev
+sudo apt-get install -y libgl1-mesa-glx
+
+2. Install CARLA
+# Download CARLA 0.9.15
+wget https://carla-releases.s3.eu-west-3.amazonaws.com/Linux/CARLA_0.9.15.tar.gz
+tar -xvzf CARLA_0.9.15.tar.gz
+
+# Set CARLA environment variables (add to ~/.bashrc)
+export CARLA_ROOT=/path/to/CARLA_0.9.15
+export PYTHONPATH=$PYTHONPATH:$CARLA_ROOT/PythonAPI/carla/dist/carla-0.9.15-py3.7-linux-x86_64.egg
+
+3. Setup Python Environment
+# Create virtual environment
+python3.7 -m venv venv
+source venv/bin/activate
+
+# Install PyTorch
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+
+# Install project dependencies
+pip install -r assets/requirements.txt
+
+4. Running the Project
+
+Start CARLA Server:
+# In one terminal
+cd CARLA_0.9.15
+./CarlaUE4.sh -quality-level=Low
+
+Training:
+# In another terminal
+source venv/bin/activate
+python scripts/train.py
+
+Evaluation:
+python scripts/evaluate.py --model path/to/model --config path/to/config
+
+Visualization:
+python scripts/visualize_comparison.py
+
+Important Notes:
+1. Ensure you have a CUDA-capable GPU and NVIDIA drivers installed
+2. The project requires Python 3.7 for CARLA 0.9.15 compatibility
+3. Adjust paths in config files to match your Ubuntu setup
+4. Make sure CARLA server is running before starting training/evaluation
+
+Troubleshooting:
+- If you encounter CUDA errors, verify your NVIDIA drivers and CUDA installation
+- For CARLA connection issues, ensure the server is running and ports are accessible
+- If Python package installation fails, try updating pip: pip install --upgrade pip 

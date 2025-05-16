@@ -1,0 +1,33 @@
+from setuptools import setup, find_packages
+
+setup(
+    name="adaptive-carla-rl",
+    version="0.1",
+    packages=find_packages(),
+    install_requires=[
+        "torch",
+        "torchvision",
+        "torchaudio",
+        "numpy",
+        "opencv-python",
+        "gymnasium",
+        "stable-baselines3",
+        "transformers",
+        "pyyaml",
+        "matplotlib",
+        "pandas",
+        "tensorboard",
+        "scipy",
+        "tqdm",
+        "pillow",
+        "requests",
+        "cloudpickle",
+        "typing-extensions",
+        "jupyter",
+        "ipython",
+        "pytest",
+        "black",
+        "flake8",
+        "seaborn"
+    ]
+) 

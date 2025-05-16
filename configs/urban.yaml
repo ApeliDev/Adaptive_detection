@@ -1,0 +1,94 @@
+# Urban driving scenario configuration
+environment:
+  scenario: "urban"
+  town: "Town10HD"
+  weather:
+    - "ClearNoon"
+    - "WetNoon"
+    - "HardRainNoon"
+    - "ClearSunset"
+  
+  # Traffic parameters
+  num_vehicles: 50
+  num_pedestrians: 100
+  vehicle_types:
+    - "vehicle.audi.tt"
+    - "vehicle.bmw.grandtourer"
+    - "vehicle.citroen.c3"
+    - "vehicle.dodge.charger_police"
+    - "vehicle.ford.mustang"
+    - "vehicle.mercedes.coupe"
+    - "vehicle.mini.cooperst"
+    - "vehicle.nissan.micra"
+    - "vehicle.nissan.patrol"
+    - "vehicle.seat.leon"
+    - "vehicle.tesla.model3"
+    - "vehicle.toyota.prius"
+    - "vehicle.volkswagen.t2"
+
+  pedestrian_types:
+    - "walker.pedestrian.0001"
+    - "walker.pedestrian.0002"
+    - "walker.pedestrian.0003"
+    - "walker.pedestrian.0004"
+    - "walker.pedestrian.0005"
+    - "walker.pedestrian.0006"
+    - "walker.pedestrian.0007"
+    - "walker.pedestrian.0008"
+    - "walker.pedestrian.0009"
+    - "walker.pedestrian.0010"
+
+  # Road complexity
+  junction_density: 0.8  # High density of intersections
+  lane_width: 3.0  # Narrower lanes
+  speed_limit: 50  # km/h
+
+  # Object detection challenges
+  occlusion_probability: 0.3
+  small_object_scale: 0.7  
+
+  # Reward configuration
+  reward_config:
+    detection_reward: 1.0
+    fps_reward: 0.3  
+    collision_penalty: -15.0
+    pedestrian_detection_bonus: 2.0
+    traffic_light_penalty: -5.0
+    lane_invasion_penalty: -3.0
+    success_reward: 20.0
+    time_penalty: -0.1  
+
+  # Episode configuration
+  max_episode_steps: 2000  # ~5 minutes at 10fps
+  success_conditions:
+    distance_traveled: 1000  # meters
+    time_without_collision: 180  # seconds
+    min_detection_accuracy: 0.75  # mAP
+
+# Perception parameters
+perception:
+  # Detection thresholds
+  min_pedestrian_confidence: 0.5
+  min_vehicle_confidence: 0.4
+  min_traffic_light_confidence: 0.6
+
+  # Region of interest defaults
+  roi:
+    default: [0.2, 0.2, 0.8, 0.8] # [left, top, right, bottom]
+    attention_scale: 1.5
+
+  # Detector switching thresholds
+  switch_to_yolo_when:
+    fps_below: 15
+    vehicles_above: 10
+    pedestrians_above: 5
+
+  switch_to_detr_when:
+    accuracy_below: 0.65
+    small_objects_above: 3
+
+# Computational constraints
+computational:
+  max_inference_time: 50  # ms
+  target_fps: 15
+  energy_budget: 5000  # mJ per episode

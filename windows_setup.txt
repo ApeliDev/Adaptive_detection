@@ -1,0 +1,73 @@
+Windows Setup Guide for Adaptive CARLA RL Project
+
+1. Python Setup
+# Download and install Python 3.7.9 from:
+https://www.python.org/ftp/python/3.7.9/python-3.7.9-amd64.exe
+
+
+
+# During installation:
+- Check "Add Python 3.7 to PATH"  ====incase you are running 3.8 contact me 
+- Choose "Customize installation"
+- Make sure "pip" is selected
+- Install for all users
+
+2. Create Virtual Environment
+# Open Command Prompt as Administrator and run:
+python -m venv venv
+.\venv\Scripts\activate
+
+3. Install PyTorch with CUDA
+# Install PyTorch (adjust CUDA version based on your GPU):
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+
+4. Install Project Dependencies
+# Create requirements.txt with these packages:
+torch>=1.7.0
+torchvision>=0.8.0
+numpy>=1.19.0
+opencv-python>=4.5.0
+gymnasium>=0.29.0
+stable-baselines3>=2.2.0
+matplotlib>=3.3.0
+seaborn>=0.11.0
+pyyaml>=5.4.0
+transformers>=4.36.0
+
+# Install requirements:
+pip install -r requirements.txt
+
+5. CARLA Setup
+# Add CARLA to PYTHONPATH (adjust path to your CARLA installation):
+set CARLA_ROOT=C:\path\to\CARLA_0.9.15
+set PYTHONPATH=%PYTHONPATH%;%CARLA_ROOT%\PythonAPI\carla\dist\carla-0.9.15-py3.7-win-amd64.egg
+
+6. Running the Project
+
+Start CARLA Server:
+# In one terminal:
+cd C:\path\to\CARLA_0.9.15
+CarlaUE4.exe -quality-level=Low
+
+Training:
+# In another terminal:
+.\venv\Scripts\activate
+python scripts/train.py
+
+Evaluation:
+python scripts/evaluate.py --model path/to/model --config path/to/config
+
+Visualization:
+python scripts/visualize_comparison.py
+
+Important Notes:
+1. Make sure CARLA server is running before starting training/evaluation
+2. Keep the CARLA server terminal window open
+3. If you get CUDA errors, verify your NVIDIA drivers are up to date
+4. If you get import errors, verify your PYTHONPATH includes CARLA
+
+Troubleshooting:
+- If Python package installation fails: pip install --upgrade pip
+- If CARLA import fails: Verify CARLA path in PYTHONPATH
+- If CUDA errors occur: Update NVIDIA drivers
+- If memory errors: Reduce batch size in config files 
